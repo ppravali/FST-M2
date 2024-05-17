@@ -1,0 +1,39 @@
+--creating table in hive
+
+ CREATE TABLE zipcodes
+    (RecordNumber int, Country string, City string, Zipcode int)
+     PARTITIONED BY (state string)
+     ROW FORMAT DELIMITED
+     FIELDS TERMINATED BY ',';
+
+
+-- loading the data
+LOAD DATA LOCAL INPATH 
+     '/zipcodes.csv'
+     INTO TABLE zipcodes;
+
+
+SHOW PARTITIONS zipcodes;
+
+--show folders
+dfs -ls -R /user/hive/warehouse/office.db/zipcodes/
+
+
+--creating bucket
+CREATE TABLE zipcodes
+     (RecordNumber int, Country string, City string, Zipcode int)
+     PARTITIONED BY (state string)
+     CLUSTERED BY (Zipcode) INTO 32 BUCKETS
+     ROW FORMAT DELIMITED
+     FIELDS TERMINATED BY ',';
+
+--load data into table
+ LOAD DATA LOCAL INPATH 
+ '/resources/zipcodes.csv'
+ INTO TABLE zipcodes;
+
+
+ SELECT * FROM zipcodes WHERE state='PR' and zipcode=704;
+
+--view buckets
+dfs -ls -R /user/hive/warehouse/zipcodes/state=PR

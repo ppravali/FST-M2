@@ -1,0 +1,22 @@
+-- Create a textfile Hive table
+CREATE TABLE test_t(k STRING, v STRING)
+ROW FORMAT DELIMITED FIELDS TERMINATED BY '\\t'
+STORED AS TEXTFILE;
+
+-- Load data from the text file into the test_t table
+LOAD DATA LOCAL INPATH '/user/Pravallika/input.txt' INTO TABLE test_t;
+
+-- Create a sequence file Hive table
+CREATE TABLE test_sq(k STRING, v STRING)
+STORED AS SEQUENCEFILE;
+
+-- Insert data from the text table into the sequence table
+INSERT INTO TABLE test_sq SELECT * FROM test_t;
+
+-- Optional: Create a partitioned table
+CREATE TABLE test_partitioned(k STRING, v STRING)
+PARTITIONED BY (partition_column STRING)
+STORED AS SEQUENCEFILE;
+
+-- Optional: Insert data into the partitioned table
+INSERT INTO TABLE test_partitioned PARTITION(partition_column='some_value') SELECT * FROM test_t;
